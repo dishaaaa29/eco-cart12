@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Green Brand Directory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #f1f8f5;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-bar input,
+    .search-bar select,
+    .review-form input,
+    .review-form textarea {
+      padding: 0.8rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      width: 100%;
+      margin-bottom: 0.8rem;
+    }
+
+    .brand-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .brand-card {
+      background: #e8f5e9;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .brand-card h3 {
+      margin-top: 0;
+    }
+
+    .rating {
+      display: flex;
+      margin: 0.5rem 0;
+    }
+
+    .rating span {
+      font-size: 1.2rem;
+      color: #ffd700;
+      margin-right: 0.2rem;
+    }
+
+    .review-button {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    .review-button:hover {
+      background-color: #1b5e20;
+    }
+
+    .brand-details {
+      background: #f0f4c3;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    .review-section {
+      margin-top: 1.5rem;
+    }
+
+    .review {
+      background: #c8e6c9;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .review-footer {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .review-form {
+      margin-top: 1rem;
+      background: #dcedc8;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .review-form button {
+      background-color: #388e3c;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .review-form button:hover {
+      background-color: #2e7d32;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+
+    .nav-buttons button {
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #1b5e20;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔍 Green Brand Directory</h1>
+
+  <div class="container">
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search for brands..." onkeyup="filterBrands()">
+      <select id="sustainabilityFilter" onchange="filterBrands()">
+        <option value="">Filter by Sustainability</option>
+        <option value="eco-friendly">Eco-Friendly Materials</option>
+        <option value="carbon-offset">Carbon Offsetting</option>
+        <option value="water-saver">Water Conservation</option>
+      </select>
+    </div>
+
+    <div class="brand-list" id="brandList"></div>
+
+    <div class="nav-buttons">
+      <button onclick="goToPrevious()">⬅ Previous</button>
+      <button onclick="goToNext()">Next ➡</button>
+    </div>
+
+  </div>
+
+  <script>
+    function goToPrevious() {
+      window.location.href = "module5.html";
+    }
+
+    function goToNext() {
+      window.location.href = "module7.html"; // ✅ Redirects to module7
+    }
+
+    const brands = [
+      {
+        name: "EcoWear",
+        description: "Sustainable fashion using organic cotton and bamboo fibers.",
+        sustainability: ["eco-friendly", "carbon-offset"],
+        rating: 4.5,
+        reviews: [
+          { user: "John", comment: "Love their eco-friendly materials!", rating: 5 },
+          { user: "Sara", comment: "Good quality but a bit pricey.", rating: 4 }
+        ]
+      },
+      {
+        name: "GreenTech",
+        description: "Technology with minimal environmental impact and carbon offsetting.",
+        sustainability: ["carbon-offset", "water-saver"],
+        rating: 4.8,
+        reviews: [
+          { user: "Mike", comment: "Great products, very sustainable!", rating: 5 },
+          { user: "Emma", comment: "I appreciate their efforts in water conservation.", rating: 4 }
+        ]
+      },
+      {
+        name: "PureGoods",
+        description: "Zero waste lifestyle products from recycled materials.",
+        sustainability: ["eco-friendly", "water-saver"],
+        rating: 4.2,
+        reviews: [
+          { user: "Anna", comment: "Affordable and eco-conscious!", rating: 4 },
+          { user: "David", comment: "Great for reducing waste.", rating: 5 }
+        ]
+      }
+    ];
+
+    function displayBrands(filteredBrands) {
+      const brandList = document.getElementById("brandList");
+      brandList.innerHTML = "";
+
+      filteredBrands.forEach(brand => {
+        const brandCard = document.createElement("div");
+        brandCard.classList.add("brand-card");
+        brandCard.innerHTML = `
+          <h3>${brand.name}</h3>
+          <p>${brand.description}</p>
+          <div class="rating">
+            ${Array.from({ length: 5 }, (_, i) =>
+              `<span>${i < Math.floor(brand.rating) ? '★' : '☆'}</span>`
+            ).join('')}
+          </div>
+          <button class="review-button" onclick="showBrandDetails('${brand.name}')">View Details & Reviews</button>
+        `;
+        brandList.appendChild(brandCard);
+      });
+    }
+
+    function filterBrands() {
+      const searchInput = document.getElementById("searchInput").value.toLowerCase();
+      const sustainabilityFilter = document.getElementById("sustainabilityFilter").value;
+
+      const filteredBrands = brands.filter(brand => {
+        const matchesSearch = brand.name.toLowerCase().includes(searchInput);
+        const matchesSustainability = sustainabilityFilter
+          ? brand.sustainability.includes(sustainabilityFilter)
+          : true;
+
+        return matchesSearch && matchesSustainability;
+      });
+
+      displayBrands(filteredBrands);
+    }
+
+    function showBrandDetails(brandName) {
+      const brand = brands.find(b => b.name === brandName);
+      if (!brand) return;
+
+      const brandList = document.getElementById("brandList");
+      brandList.innerHTML = `
+        <div class="brand-details">
+          <h3>${brand.name}</h3>
+          <p>${brand.description}</p>
+          <div class="rating">
+            ${Array.from({ length: 5 }, (_, i) =>
+              `<span>${i < Math.floor(brand.rating) ? '★' : '☆'}</span>`
+            ).join('')}
+          </div>
+        </div>
+
+        <div class="review-section">
+          <h4>Community Reviews</h4>
+          <div id="reviewsContainer">
+            ${brand.reviews.map(review => `
+              <div class="review">
+                <p><strong>${review.user}:</strong> ${review.comment}</p>
+                <div class="review-footer">
+                  <span>Rating: ${review.rating} / 5</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="review-form">
+            <h4>Submit a Review</h4>
+            <input type="text" id="reviewerName" placeholder="Your Name">
+            <textarea id="reviewComment" placeholder="Your Comment"></textarea>
+            <input type="number" id="reviewRating" placeholder="Rating (1-5)" min="1" max="5">
+            <button onclick="submitReview('${brand.name}')">Submit Review</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function submitReview(brandName) {
+      const name = document.getElementById("reviewerName").value.trim();
+      const comment = document.getElementById("reviewComment").value.trim();
+      const rating = parseInt(document.getElementById("reviewRating").value);
+
+      if (!name || !comment || isNaN(rating) || rating < 1 || rating > 5) {
+        alert("Please fill out all fields correctly.");
+        return;
+      }
+
+      const brand = brands.find(b => b.name === brandName);
+      if (!brand) return;
+
+      brand.reviews.push({ user: name, comment, rating });
+      showBrandDetails(brandName);
+    }
+
+    displayBrands(brands);
+  </script>
+
+</body>
+</html>

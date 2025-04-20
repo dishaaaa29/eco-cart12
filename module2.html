@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Shopping Insights - Module 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f7f4;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #2e7d32;
+      text-align: center;
+    }
+
+    .input-section {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    input[type="text"] {
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 300px;
+    }
+
+    button {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .report {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .chart-bar {
+      height: 20px;
+      background: #ddd;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .chart-fill {
+      height: 100%;
+      background-color: #66bb6a;
+      text-align: right;
+      padding-right: 5px;
+      color: white;
+      line-height: 20px;
+      font-size: 12px;
+    }
+
+    .insight {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #e8f5e9;
+      border-left: 4px solid #2e7d32;
+      border-radius: 6px;
+    }
+
+    .purchase-log {
+      margin-top: 1rem;
+      font-size: 14px;
+      color: #555;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .nav-buttons button {
+      background-color: #388e3c;
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧠 AI-Powered Shopping Insights</h1>
+
+  <div class="input-section">
+    <input type="text" id="purchaseInput" placeholder="Enter a recent purchase...">
+    <button onclick="addPurchase()">Add Purchase</button>
+  </div>
+
+  <div class="report">
+    <h2>🌿 Monthly Sustainability Report</h2>
+
+    <div class="chart">
+      <p>Average Product Eco Score</p>
+      <div class="chart-bar"><div class="chart-fill" id="ecoScoreBar" style="width: 0%">0%</div></div>
+
+      <p>Estimated CO₂ Saved</p>
+      <div class="chart-bar"><div class="chart-fill" id="carbonBar" style="width: 0%">0kg</div></div>
+    </div>
+
+    <div class="insight" id="tips">
+      <strong>Eco Tips:</strong>
+      <ul id="tipList">
+        <li>Switch to reusable water bottles to reduce plastic waste.</li>
+        <li>Choose items with eco certifications when possible.</li>
+      </ul>
+    </div>
+
+    <div class="purchase-log">
+      <strong>📝 Recent Purchases:</strong>
+      <ul id="purchaseList"></ul>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="nav-buttons">
+    <button onclick="goPrevious()">⬅️ Previous</button>
+    <button onclick="goNext()">Next ➡️</button>
+  </div>
+
+  <script>
+    const purchases = [];
+    const tipsDatabase = {
+      "plastic bottle": "Try a reusable stainless steel bottle instead.",
+      "paper towel": "Use bamboo or reusable cloth towels.",
+      "fast fashion": "Shop thrift or sustainable clothing brands.",
+      "coffee cup": "Bring your own mug to cafes.",
+      "takeout": "Reduce packaging waste by eating in or using your own container."
+    };
+
+    function addPurchase() {
+      const input = document.getElementById('purchaseInput');
+      const value = input.value.trim().toLowerCase();
+      if (!value) return;
+
+      purchases.push(value);
+      updateReport();
+      input.value = '';
+    }
+
+    function updateReport() {
+      const ecoScore = Math.max(0, 70 - purchases.length * 3);
+      const carbonSaved = Math.max(0, 15 - purchases.length * 1.2);
+
+      document.getElementById('ecoScoreBar').style.width = ecoScore + '%';
+      document.getElementById('ecoScoreBar').textContent = ecoScore + '%';
+
+      document.getElementById('carbonBar').style.width = (carbonSaved * 5) + '%';
+      document.getElementById('carbonBar').textContent = carbonSaved.toFixed(1) + 'kg';
+
+      const list = document.getElementById('purchaseList');
+      list.innerHTML = "";
+      purchases.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+      });
+
+      const tipList = document.getElementById('tipList');
+      tipList.innerHTML = "";
+      const uniqueTips = new Set();
+      purchases.forEach(item => {
+        if (tipsDatabase[item]) uniqueTips.add(tipsDatabase[item]);
+      });
+
+      if (uniqueTips.size === 0) {
+        tipList.innerHTML = "<li>Great job! Keep making sustainable choices.</li>";
+      } else {
+        uniqueTips.forEach(tip => {
+          const li = document.createElement('li');
+          li.textContent = tip;
+          tipList.appendChild(li);
+        });
+      }
+    }
+
+    function goNext() {
+      window.location.href = "module3.html";
+    }
+
+    function goPrevious() {
+      window.location.href = "module1.html";
+    }
+  </script>
+
+</body>
+</html>

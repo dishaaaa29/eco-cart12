@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eco-Friendly Stores in Satara</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      background-color: #2e7d32;
+      color: white;
+      padding: 1rem;
+      margin: 0;
+      text-align: center;
+    }
+    #map {
+      height: 80vh;
+      width: 100%;
+    }
+    .nav-buttons {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .nav-buttons button {
+      background-color: #4caf50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin: 0 10px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .nav-buttons button:hover {
+      background-color: #388e3c;
+    }
+    .nav-buttons a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📍 Eco-Friendly Stores in Satara</h1>
+  <div id="map"></div>
+
+  <div class="nav-buttons">
+    <button onclick="goToPrevious()">⬅ Previous</button>
+    <a href="index.html">
+      <button>🏠 Home</button>
+    </a>
+  </div>
+
+  <script>
+    function initMap() {
+      const satara = { lat: 17.6805, lng: 74.0183 };
+
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 13,
+        center: satara,
+      });
+
+      const ecoStores = [
+        {
+          name: "Rajwada Market (Organic Groceries)",
+          position: { lat: 17.6839, lng: 74.0069 }
+        },
+        {
+          name: "Sadar Bazar (Ayurvedic & Sustainable Stores)",
+          position: { lat: 17.6847, lng: 74.0152 }
+        },
+        {
+          name: "Mahabaleshwar Road (Organic Produce)",
+          position: { lat: 17.7005, lng: 73.9900 }
+        },
+        {
+          name: "Hat Bazaar (Weekly Local Market)",
+          position: { lat: 17.6755, lng: 74.0200 }
+        },
+        {
+          name: "Ajinkyatara Fort Base (Handicrafts Area)",
+          position: { lat: 17.6778, lng: 74.0362 }
+        }
+      ];
+
+      ecoStores.forEach(store => {
+        const marker = new google.maps.Marker({
+          position: store.position,
+          map: map,
+          title: store.name,
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<strong>${store.name}</strong>`
+        });
+
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+        });
+      });
+    }
+
+    function goToPrevious() {
+      window.location.href = "module7.html"; // Set to your actual previous page
+    }
+  </script>
+
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLRk-zINLCjW0YAy6Wxw8HEhOSsaTCWoY&callback=initMap"
+    async
+    defer>
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Community & Challenges</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #f1f8f5;
+      color: #333;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background: #121212;
+      color: #e0e0e0;
+    }
+
+    .toggle-mode {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      cursor: pointer;
+      background: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.4rem 1rem;
+      font-size: 14px;
+      z-index: 999;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: background 0.3s;
+    }
+
+    body.dark-mode .container {
+      background: #1e1e1e;
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+    }
+
+    .challenge {
+      background: #e8f5e9;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .challenge:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .challenge h3 {
+      margin: 0 0 0.5rem;
+    }
+
+    .challenge p {
+      margin: 0.5rem 0;
+    }
+
+    .progress {
+      background: #c8e6c9;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 14px;
+      margin: 0.5rem 0;
+    }
+
+    .progress-fill {
+      background: #43a047;
+      height: 100%;
+      text-align: right;
+      color: white;
+      font-size: 12px;
+      padding-right: 5px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    button {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+
+    button:hover {
+      background-color: #1b5e20;
+    }
+
+    .leaderboard {
+      background: #f0f4c3;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    .leaderboard table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .leaderboard th, .leaderboard td {
+      padding: 0.7rem;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .leaderboard tbody tr:first-child {
+      font-weight: bold;
+      background-color: #dcedc8;
+    }
+
+    .groups {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .group-card {
+      flex: 1 1 240px;
+      background: #fff3e0;
+      border: 2px solid #ffb74d;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .group-card::after {
+      content: '🔥';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      font-size: 20px;
+      display: none;
+    }
+
+    .group-card.joined::after {
+      display: block;
+    }
+
+    .group-card h4 {
+      margin: 0.5rem 0;
+    }
+
+    .group-card button {
+      margin-top: 0.5rem;
+    }
+
+    .nav-buttons {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .nav-buttons button {
+      margin: 0 1rem;
+      padding: 0.6rem 1.5rem;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="toggle-mode" onclick="toggleDarkMode()">🌙 Toggle Mode</button>
+  <h1>👥 Community & Challenges</h1>
+
+  <div class="container">
+
+    <!-- 🌿 Challenges Section -->
+    <div class="section">
+      <h2>🌿 Active Challenges</h2>
+      <div class="challenge">
+        <h3>Plastic-Free Week</h3>
+        <p>Avoid using single-use plastic for 7 days.</p>
+        <div class="progress">
+          <div class="progress-fill" id="plasticProgress" style="width: 0%;">0%</div>
+        </div>
+        <button onclick="joinChallenge('plasticProgress', 70)">Join Challenge</button>
+      </div>
+
+      <div class="challenge">
+        <h3>Walk/Bike 20km</h3>
+        <p>Use sustainable transport for at least 20km this month.</p>
+        <div class="progress">
+          <div class="progress-fill" id="bikeProgress" style="width: 0%;">0%</div>
+        </div>
+        <button onclick="joinChallenge('bikeProgress', 45)">Join Challenge</button>
+      </div>
+    </div>
+
+    <!-- 🏆 Leaderboard -->
+    <div class="section">
+      <h2>🏆 Group Leaderboard</h2>
+      <div class="leaderboard">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>CO₂ Saved (kg)</th>
+              <th>Challenges Completed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🌟 Ayesha</td>
+              <td>12.3</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>🌿 Rahul</td>
+              <td>9.7</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>🌼 Priya</td>
+              <td>7.1</td>
+              <td>3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 👥 Groups -->
+    <div class="section">
+      <h2>👥 Eco Groups to Join</h2>
+      <div class="groups">
+        <div class="group-card" id="group1">
+          <h4>Zero Waste Warriors</h4>
+          <p>Join us to reduce daily waste 💪</p>
+          <button onclick="joinGroup('group1')">Join Group</button>
+        </div>
+        <div class="group-card" id="group2">
+          <h4>Green Cyclers</h4>
+          <p>Promoting biking and sustainable mobility 🚲</p>
+          <button onclick="joinGroup('group2')">Join Group</button>
+        </div>
+        <div class="group-card" id="group3">
+          <h4>Plastic-Free Champs</h4>
+          <p>Fighting plastic, one step at a time 🧴</p>
+          <button onclick="joinGroup('group3')">Join Group</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <button onclick="window.location.href='module4.html'">⬅️ Previous</button>
+      <button onclick="window.location.href='module6.html'">Next ➡️</button>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function joinChallenge(progressId, percent) {
+      const bar = document.getElementById(progressId);
+      bar.style.width = percent + '%';
+      bar.innerText = percent + '%';
+      alert("You've joined the challenge!");
+    }
+
+    function joinGroup(groupId) {
+      const card = document.getElementById(groupId);
+      card.classList.add('joined');
+      alert("You've joined the group!");
+    }
+  </script>
+
+</body>
+</html>

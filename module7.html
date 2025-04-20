@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Consumers: Sustainable Shopping Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #f1f8f5;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: background-color 0.3s;
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+    }
+
+    .purchase-log {
+      background: #e8f5e9;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .purchase-log input,
+    .purchase-log button {
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      width: 100%;
+    }
+
+    .purchase-log button {
+      background: #2e7d32;
+      color: white;
+      cursor: pointer;
+    }
+
+    .purchase-log button:hover {
+      background-color: #1b5e20;
+    }
+
+    .purchase-item {
+      margin-bottom: 1.5rem;
+    }
+
+    .purchase-item h4 {
+      margin: 0.5rem 0;
+      color: #2e7d32;
+    }
+
+    .eco-tips {
+      background: #d0f0c0;
+      padding: 0.8rem;
+      border-radius: 8px;
+    }
+
+    .eco-tips ul {
+      padding-left: 1.2rem;
+      margin: 0;
+    }
+
+    .eco-tips li {
+      margin-bottom: 0.4rem;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+
+    .nav-buttons button {
+      padding: 0.8rem 1.5rem;
+      background-color: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #1b5e20;
+    }
+
+    /* Dark Mode */
+    .dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    .dark-mode .container {
+      background-color: #1e1e1e;
+    }
+
+    .dark-mode .purchase-log {
+      background: #263238;
+    }
+
+    .dark-mode .eco-tips {
+      background-color: #33691e;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Consumers: Track Your Sustainable Shopping</h1>
+
+  <div class="container">
+    <div class="section">
+      <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()" />
+        🌙 Dark Mode
+      </label>
+
+      <h2>🛒 Log Your Eco-Friendly Purchases</h2>
+      <div class="purchase-log">
+        <input type="text" id="purchaseItem" placeholder="Enter your eco-friendly purchase..." />
+        <button onclick="logPurchase()">Log Purchase</button>
+
+        <!-- Progress Bar -->
+        <div style="margin-top: 1rem;">
+          <label><strong>🌿 Your Green Score:</strong></label>
+          <div style="background: #ccc; border-radius: 10px; overflow: hidden; margin-top: 5px;">
+            <div id="ecoScoreBar" style="width: 0%; height: 20px; background: #4caf50; text-align: center; color: white; line-height: 20px; border-radius: 10px;">0%</div>
+          </div>
+        </div>
+
+        <!-- Clear History -->
+        <button onclick="clearHistory()" style="background-color: #c62828; margin-top: 0.5rem;">Clear History</button>
+
+        <div id="purchaseList"></div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <button onclick="goToPrevious()">← Previous</button>
+      <button onclick="goToNext()">Next →</button>
+    </div>
+  </div>
+
+  <script>
+    let purchaseHistory = [];
+
+    const tipMap = {
+      bag: "Use reusable shopping bags instead of plastic 🛍️",
+      bottle: "Switch to refillable water bottles to cut plastic waste 🚰",
+      local: "Support local farmers and reduce carbon emissions 🌱",
+      packaging: "Choose products with minimal or biodegradable packaging ♻️",
+      clothes: "Buy clothes made from organic or recycled fabric 👕",
+      cleaner: "Use biodegradable and natural cleaning products 🧼",
+      produce: "Choose seasonal and local produce 🍎",
+      second: "Buy second-hand or refurbished items to reduce waste ♻️",
+      bamboo: "Opt for bamboo products over plastic or paper 🎍"
+    };
+
+    function logPurchase() {
+      const input = document.getElementById("purchaseItem");
+      const item = input.value.trim();
+
+      if (item === "") {
+        alert("Please enter a valid purchase.");
+        return;
+      }
+
+      purchaseHistory.push({
+        name: item,
+        date: new Date().toLocaleDateString()
+      });
+
+      input.value = "";
+      updatePurchaseList();
+    }
+
+    function updatePurchaseList() {
+      const purchaseList = document.getElementById("purchaseList");
+      purchaseList.innerHTML = "";
+
+      purchaseHistory.forEach((entry) => {
+        const lowerItem = entry.name.toLowerCase();
+
+        const div = document.createElement("div");
+        div.className = "purchase-item";
+
+        const itemTitle = document.createElement("h4");
+        itemTitle.textContent = `• ${entry.name}`;
+        div.appendChild(itemTitle);
+
+        const dateP = document.createElement("p");
+        dateP.style.fontSize = "0.9rem";
+        dateP.style.color = "#666";
+        dateP.textContent = `🗓️ Logged on: ${entry.date}`;
+        div.appendChild(dateP);
+
+        const relatedTips = new Set();
+        for (const keyword in tipMap) {
+          if (lowerItem.includes(keyword)) {
+            relatedTips.add(tipMap[keyword]);
+          }
+        }
+
+        if (relatedTips.size > 0) {
+          const tipsContainer = document.createElement("div");
+          tipsContainer.className = "eco-tips";
+
+          const tipsList = document.createElement("ul");
+          relatedTips.forEach(tip => {
+            const li = document.createElement("li");
+            li.textContent = tip;
+            tipsList.appendChild(li);
+          });
+
+          tipsContainer.appendChild(tipsList);
+          div.appendChild(tipsContainer);
+        }
+
+        purchaseList.appendChild(div);
+      });
+
+      const scorePercent = Math.min((purchaseHistory.length * 10), 100);
+      const scoreBar = document.getElementById("ecoScoreBar");
+      scoreBar.style.width = scorePercent + "%";
+      scoreBar.textContent = scorePercent + "%";
+    }
+
+    function clearHistory() {
+      if (confirm("Are you sure you want to clear your purchase history?")) {
+        purchaseHistory = [];
+        updatePurchaseList();
+      }
+    }
+
+    function goToPrevious() {
+      window.location.href = "module5.html"; // Update as needed
+    }
+
+    function goToNext() {
+      window.location.href = "apps.html"; // <-- Redirect to apps.html
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sustainability Score</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f1f7f4;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #2e7d32;
+    }
+
+    .search-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+      position: relative;
+    }
+
+    .filters {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    input[type="text"], select {
+      padding: 0.5rem;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #2e7d32;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 250px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .suggestions div {
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+
+    .suggestions div:hover {
+      background-color: #e0f2f1;
+    }
+
+    .score-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .score-value {
+      font-size: 3rem;
+      font-weight: bold;
+      margin: 1rem 0;
+      color: #2e7d32;
+    }
+
+    .score-breakdown {
+      text-align: left;
+      margin-top: 1.5rem;
+    }
+
+    .bar {
+      background-color: #ddd;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .bar-inner {
+      height: 20px;
+      border-radius: 20px;
+      background-color: #66bb6a;
+      text-align: right;
+      color: white;
+      padding-right: 5px;
+      font-size: 12px;
+      line-height: 20px;
+    }
+
+    .product-img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .nav-buttons button {
+      background-color: #388e3c;
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>♻️ Sustainability Score</h1>
+
+  <div class="search-section">
+    <div class="filters">
+      <select id="categorySelect">
+        <option value="">-- Select Category --</option>
+        <option value="kitchen">Kitchen</option>
+        <option value="clothing">Clothing</option>
+        <option value="tech">Tech</option>
+        <option value="household">Household</option>
+      </select>
+
+      <div style="position: relative;">
+        <input type="text" id="productInput" placeholder="Search product..." onkeyup="showSuggestions()">
+        <div id="suggestionsBox" class="suggestions hidden"></div>
+      </div>
+
+      <button onclick="checkScore()">Check</button>
+    </div>
+  </div>
+
+  <div id="scoreContainer" class="score-container hidden">
+    <img id="productImage" class="product-img" src="" alt="Product Image">
+    <h2 id="productName"></h2>
+    <div class="score-value" id="scoreValue">0</div>
+
+    <div class="score-breakdown">
+      <h3>Breakdown:</h3>
+      <div>
+        <label>Materials</label>
+        <div class="bar"><div class="bar-inner" id="materialsBar" style="width: 0%">0%</div></div>
+      </div>
+      <div>
+        <label>Packaging</label>
+        <div class="bar"><div class="bar-inner" id="packagingBar" style="width: 0%">0%</div></div>
+      </div>
+      <div>
+        <label>Certifications</label>
+        <div class="bar"><div class="bar-inner" id="certificationsBar" style="width: 0%">0%</div></div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="nav-buttons">
+        <button onclick="goPrevious()">⬅️ Previous</button>
+        <button onclick="goNext()">Next ➡️</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const products = {
+      "bamboo toothbrush": {
+        score: 85, materials: 90, packaging: 80, certifications: 85,
+        image: "images/toothbrush.jpg", category: "household"
+      },
+      "plastic bottle": {
+        score: 35, materials: 20, packaging: 50, certifications: 35,
+        image:"images/plastic bottle.jpg", category: "household"
+      },
+      "organic cotton t-shirt": {
+        score: 78, materials: 85, packaging: 60, certifications: 90,
+        image: "images/tshirt.jpg", category: "clothing"
+      },
+      "led bulb": {
+        score: 92, materials: 90, packaging: 85, certifications: 95,
+        image: "images/led bulb.jpg", category: "tech"
+      },
+      "solar charger": {
+        score: 95, materials: 92, packaging: 90, certifications: 96,
+        image: "images/solarcharger.jpg", category: "tech"
+      },
+      "hemp backpack": {
+        score: 80, materials: 85, packaging: 75, certifications: 80,
+        image:"images/backpack.jpg", category: "clothing"
+      },
+      "biodegradable trash bag": {
+        score: 77, materials: 80, packaging: 70, certifications: 81,
+        image: "images/trash bag.jpg", category: "household"
+      },
+      "sweatshirt": {
+        score: 75, materials: 78, packaging: 65, certifications: 82,
+        image: "images/sweatshirt.jpg", category: "clothing"
+      },
+      "bamboo cutlery set": {
+        score: 87, materials: 90, packaging: 80, certifications: 85,
+        image: "images/bamboo cutlery set.jpg", category: "kitchen"
+      },
+      "paper straws": {
+        score: 68, materials: 70, packaging: 65, certifications: 70,
+        image: "images/paper straws.jpg", category: "kitchen"
+      }
+    };
+
+    function checkScore(productName = null) {
+      const inputVal = productName || document.getElementById('productInput').value.toLowerCase().trim();
+      const category = document.getElementById('categorySelect').value;
+      const data = products[inputVal];
+
+      if (!data) {
+        alert("Product not found. Try suggestions.");
+        return;
+      }
+
+      if (category && data.category !== category) {
+        alert("This product doesn't belong to the selected category.");
+        return;
+      }
+
+      document.getElementById('scoreContainer').classList.remove('hidden');
+      document.getElementById('productName').innerText = inputVal.charAt(0).toUpperCase() + inputVal.slice(1);
+      document.getElementById('scoreValue').innerText = data.score;
+      document.getElementById('productImage').src = data.image;
+
+      updateBar("materialsBar", data.materials);
+      updateBar("packagingBar", data.packaging);
+      updateBar("certificationsBar", data.certifications);
+
+      hideSuggestions();
+    }
+
+    function updateBar(id, value) {
+      const bar = document.getElementById(id);
+      bar.style.width = value + "%";
+      bar.innerText = value + "%";
+
+      if (value < 40) bar.style.backgroundColor = "#ef5350";
+      else if (value < 70) bar.style.backgroundColor = "#ffa726";
+      else bar.style.backgroundColor = "#66bb6a";
+    }
+
+    function showSuggestions() {
+      const input = document.getElementById('productInput').value.toLowerCase();
+      const suggestionsBox = document.getElementById('suggestionsBox');
+      suggestionsBox.innerHTML = "";
+
+      const matches = Object.keys(products).filter(p => p.includes(input));
+
+      if (matches.length === 0 || input === "") {
+        suggestionsBox.classList.add("hidden");
+        return;
+      }
+
+      matches.forEach(match => {
+        const div = document.createElement("div");
+        div.textContent = match;
+        div.onclick = () => {
+          document.getElementById('productInput').value = match;
+          checkScore(match);
+        };
+        suggestionsBox.appendChild(div);
+      });
+
+      suggestionsBox.classList.remove("hidden");
+    }
+
+    function hideSuggestions() {
+      document.getElementById('suggestionsBox').classList.add("hidden");
+    }
+
+    function goNext() {
+      window.location.href = "module2.html"; // Update this to your actual next module
+    }
+
+    function goPrevious() {
+      window.location.href = "index.html"; // Or "module0.html" if you have one before this
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".filters")) {
+        hideSuggestions();
+      }
+    });
+  </script>
+
+</body>
+</html>

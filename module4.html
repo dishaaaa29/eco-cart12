@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Eco-Tracker Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #f1f8f5;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    .dashboard {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #e8f5e9;
+      padding: 1rem 1.2rem;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .stat-card h2 {
+      margin: 0.3rem 0;
+      font-size: 2rem;
+      color: #1b5e20;
+    }
+
+    .progress-bar {
+      background: #c8e6c9;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+      height: 14px;
+    }
+
+    .progress-fill {
+      background: #66bb6a;
+      height: 100%;
+      text-align: right;
+      padding-right: 6px;
+      color: white;
+      font-size: 11px;
+      line-height: 14px;
+    }
+
+    .badges {
+      margin-top: 2rem;
+    }
+
+    .badges h3 {
+      margin-bottom: 1rem;
+    }
+
+    .badge-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .badge {
+      background: #fff3e0;
+      border: 2px solid #ffb74d;
+      padding: 1rem;
+      border-radius: 10px;
+      width: 140px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .badge:hover {
+      transform: scale(1.05);
+    }
+
+    .badge.earned {
+      background: #e0f2f1;
+      border-color: #4db6ac;
+    }
+
+    .badge span {
+      font-size: 2rem;
+    }
+
+    .badge:not(.earned)::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: -2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      background: #333;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .badge:not(.earned):hover::after {
+      opacity: 1;
+    }
+
+    .level {
+      margin-top: 2rem;
+      background: #c5e1a5;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .level-progress {
+      margin-top: 0.8rem;
+      background: #aed581;
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .level-progress-fill {
+      height: 100%;
+      background: #558b2f;
+      width: 60%;
+    }
+
+    .motivation {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 1rem;
+      color: #388e3c;
+      font-style: italic;
+    }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2.5rem;
+    }
+
+    .navigation-buttons button {
+      padding: 0.7rem 1.5rem;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #2e7d32;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .navigation-buttons button:hover {
+      background-color: #1b5e20;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📈 Eco-Tracker Dashboard</h1>
+
+  <div class="dashboard">
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p>🌍 CO₂ Saved</p>
+        <h2 id="co2Saved">0 kg</h2>
+        <div class="progress-bar">
+          <div class="progress-fill" id="co2Progress"></div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <p>🧴 Plastic Reduced</p>
+        <h2 id="plasticReduced">0 pcs</h2>
+        <div class="progress-bar">
+          <div class="progress-fill" id="plasticProgress"></div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <p>💧 Water Saved</p>
+        <h2 id="waterSaved">0 L</h2>
+        <div class="progress-bar">
+          <div class="progress-fill" id="waterProgress"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="badges">
+      <h3>🏅 Earned Badges</h3>
+      <div class="badge-grid">
+        <div class="badge earned">
+          <span>🌱</span>
+          <p>First Green Step</p>
+        </div>
+        <div class="badge earned">
+          <span>♻️</span>
+          <p>Plastic Free Pro</p>
+        </div>
+        <div class="badge" data-tooltip="Save 500L of water to earn">
+          <span>🚿</span>
+          <p>Water Warrior</p>
+        </div>
+        <div class="badge" data-tooltip="Make 5 eco purchases to earn">
+          <span>🛍️</span>
+          <p>Eco Shopper</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="level">
+      <h3>🎖️ Eco-Level: <span id="ecoLevel">Green Guardian (Lvl 3)</span></h3>
+      <p>Keep going! You're close to unlocking "Sustainability Master"</p>
+      <div class="level-progress">
+        <div class="level-progress-fill" style="width: 60%;"></div>
+      </div>
+    </div>
+
+    <div class="motivation" id="motivationText"></div>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation-buttons">
+      <button onclick="goToPreviousPage()">⬅ Previous</button>
+      <button onclick="goToNextPage()">Next ➡</button>
+    </div>
+
+  </div>
+
+  <script>
+    const stats = {
+      co2Saved: 12.5,
+      plasticReduced: 45,
+      waterSaved: 320,
+      co2Goal: 20,
+      plasticGoal: 50,
+      waterGoal: 400
+    };
+
+    const tips = [
+      "Every action counts! Even skipping one plastic bag helps 🌿",
+      "Saving water today means a greener tomorrow 💧",
+      "Recycling is a vote for a cleaner planet ♻️",
+      "Small steps lead to big changes 🌍",
+      "Use what you have before buying new. That’s sustainability!"
+    ];
+
+    function updateProgressBars() {
+      document.getElementById("co2Saved").textContent = stats.co2Saved + " kg";
+      document.getElementById("plasticReduced").textContent = stats.plasticReduced + " pcs";
+      document.getElementById("waterSaved").textContent = stats.waterSaved + " L";
+
+      const co2Pct = Math.min((stats.co2Saved / stats.co2Goal) * 100, 100).toFixed(0);
+      const plasticPct = Math.min((stats.plasticReduced / stats.plasticGoal) * 100, 100).toFixed(0);
+      const waterPct = Math.min((stats.waterSaved / stats.waterGoal) * 100, 100).toFixed(0);
+
+      document.getElementById("co2Progress").style.width = co2Pct + "%";
+      document.getElementById("co2Progress").textContent = co2Pct + "%";
+
+      document.getElementById("plasticProgress").style.width = plasticPct + "%";
+      document.getElementById("plasticProgress").textContent = plasticPct + "%";
+
+      document.getElementById("waterProgress").style.width = waterPct + "%";
+      document.getElementById("waterProgress").textContent = waterPct + "%";
+    }
+
+    function showMotivation() {
+      const randomTip = tips[Math.floor(Math.random() * tips.length)];
+      document.getElementById("motivationText").textContent = randomTip;
+    }
+
+    function goToNextPage() {
+      window.location.href = "module5.html"; // ✅ Redirects to Module 5
+    }
+
+    function goToPreviousPage() {
+      window.location.href = "module3.html"; // ✅ Redirects to previous page (update as needed)
+    }
+
+    updateProgressBars();
+    showMotivation();
+  </script>
+
+</body>
+</html>

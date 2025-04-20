@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Carbon Offset Integration - Module 4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f7f4;
+      color: #333;
+      padding: 2rem;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+      margin-bottom: 2rem;
+    }
+
+    .checkout-box {
+      background: white;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .summary {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .summary p {
+      margin: 0.3rem 0;
+    }
+
+    .summary .delivery-date {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .offset-section {
+      background: #e8f5e9;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      position: relative;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .checkbox-label input {
+      cursor: pointer;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+      margin-left: 6px;
+    }
+
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 220px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 0.5rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%; 
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .impact {
+      margin-top: 1rem;
+      font-size: 14px;
+      color: #1b5e20;
+    }
+
+    .progress-bar {
+      background: #c8e6c9;
+      border-radius: 6px;
+      height: 12px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      background-color: #2e7d32;
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    button {
+      background-color: #2e7d32;
+      color: white;
+      padding: 0.7rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      margin-top: 1.5rem;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1b5e20;
+    }
+
+    .confirmation {
+      background-color: #c8e6c9;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      border-radius: 8px;
+      display: none;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media screen and (max-width: 640px) {
+      body {
+        padding: 1rem;
+      }
+
+      .checkout-box {
+        padding: 1.5rem;
+      }
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      max-width: 600px;
+      margin: 2rem auto 0;
+    }
+
+    .nav-buttons button {
+      width: 48%;
+      font-size: 1rem;
+      padding: 0.6rem 1rem;
+      background-color: #388e3c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📦 Carbon Offset at Checkout</h1>
+
+  <div class="checkout-box">
+    <div class="summary">
+      <h3>🛍️ Your Order Summary</h3>
+
+      <label for="productCount">Select number of eco items:</label>
+      <input type="number" id="productCount" value="3" min="1" max="20" onchange="updateOrderSummary()" style="width: 60px; margin-left: 10px;">
+
+      <p id="productText">Products: 3 eco items</p>
+      <p id="weightText">Total Weight: 4.2 kg</p>
+      <p id="distanceText">Estimated Delivery Distance: 250 km</p>
+      <p id="co2Text"><strong>Estimated CO₂: 2.4 kg</strong></p>
+      <p class="delivery-date">📅 Estimated Delivery: April 22, 2025</p>
+    </div>
+
+    <div class="offset-section">
+      <label class="checkbox-label">
+        <input type="checkbox" id="offsetCheckbox" onchange="updateImpact()">
+        Offset my carbon footprint for $1.20
+        <span class="tooltip">ℹ️
+          <span class="tooltip-text">Your contribution funds reforestation and CO₂ capture projects.</span>
+        </span>
+      </label>
+
+      <div class="impact" id="impactText" style="display:none;">
+        🌳 Your contribution will protect 0.5 trees and offset 2.4kg CO₂.
+        <div class="progress-bar">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="placeOrder()">Place Order</button>
+
+    <div class="confirmation" id="confirmationBox">
+      ✅ Thank you! Your carbon has been offset through a certified reforestation project. 🌿
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="nav-buttons">
+    <button onclick="goPrevious()">⬅️ Previous</button>
+    <button onclick="goNext()">Next ➡️</button>
+  </div>
+
+  <script>
+    function updateOrderSummary() {
+      const productCount = parseInt(document.getElementById('productCount').value);
+      const weightPerItem = 1.4;
+      const co2PerItem = 0.8;
+
+      const totalWeight = (productCount * weightPerItem).toFixed(1);
+      const totalCO2 = (productCount * co2PerItem).toFixed(1);
+
+      document.getElementById('productText').textContent = `Products: ${productCount} eco items`;
+      document.getElementById('weightText').textContent = `Total Weight: ${totalWeight} kg`;
+      document.getElementById('co2Text').innerHTML = `<strong>Estimated CO₂: ${totalCO2} kg</strong>`;
+
+      if (document.getElementById('offsetCheckbox').checked) {
+        const trees = (productCount * 0.17).toFixed(1);
+        document.getElementById('impactText').innerHTML = 
+          `🌳 Your contribution will protect ${trees} trees and offset ${totalCO2}kg CO₂.
+          <div class="progress-bar"><div class="progress-bar-fill" id="progressFill" style="width: 100%;"></div></div>`;
+      }
+    }
+
+    function updateImpact() {
+      const checkbox = document.getElementById('offsetCheckbox');
+      const impact = document.getElementById('impactText');
+
+      if (checkbox.checked) {
+        const productCount = parseInt(document.getElementById('productCount').value);
+        const totalCO2 = (productCount * 0.8).toFixed(1);
+        const trees = (productCount * 0.17).toFixed(1);
+
+        impact.style.display = 'block';
+        impact.innerHTML = `
+          🌳 Your contribution will protect ${trees} trees and offset ${totalCO2}kg CO₂.
+          <div class="progress-bar">
+            <div class="progress-bar-fill" id="progressFill" style="width: 100%;"></div>
+          </div>
+        `;
+      } else {
+        impact.style.display = 'none';
+      }
+    }
+
+    function placeOrder() {
+      const checkbox = document.getElementById('offsetCheckbox');
+      const confirmation = document.getElementById('confirmationBox');
+
+      if (checkbox.checked) {
+        const productCount = parseInt(document.getElementById('productCount').value);
+        const totalCO2 = (productCount * 0.8).toFixed(1);
+        console.log(`Sending offset request for ${totalCO2}kg CO₂...`);
+        // Trigger API or logic here
+      }
+
+      confirmation.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goNext() {
+      window.location.href = "module4.html";
+    }
+
+    function goPrevious() {
+      window.location.href = "module2.html";
+    }
+
+    window.onload = updateOrderSummary;
+  </script>
+
+</body>
+</html>
